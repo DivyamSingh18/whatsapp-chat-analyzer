@@ -28,7 +28,7 @@
 9. Most Active Months
 10. Hourly Activity per week_day
 
-<br><br>
+
 An example image is given below:
 
 ![image](https://user-images.githubusercontent.com/64833579/205714041-f9d2d9fb-cd7a-4164-bfea-42e655bd20d4.png)
