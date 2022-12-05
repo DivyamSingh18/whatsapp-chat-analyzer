@@ -4,36 +4,44 @@ import matplotlib.pyplot as plt
 import streamlit.components.v1 as components
 import plotly.express as px
 import seaborn as sns
-import os
+import pandas as pd
 
 st.sidebar.title('Whatsapp Chat Analyzer')
 
 placeholder = st.title('Please Enter path for whatsapp exported chat.txt file for Data Analysis')
 note = st.caption('CAUTION: THIS APPLICATION WORKS FOR THE CHATS EXTRACTED FROM THE 12 HOUR FORMAT PHONES.') 
 
-# uploaded_file = st.sidebar.file_uploader('Choose a file')
+uploaded_file = st.sidebar.file_uploader('Choose a file')
+# st.write(uploaded_file)
+# dataframe = pd.read_csv(uploaded_file)
+# st.write(dataframe)
 
-text_input = st.sidebar.text_input("Please, Enter your File Path 👇")
-st.sidebar.caption('For eg. ur/file/path/filename.txt')
-if text_input == '':
-    st.title('')
-elif text_input:
-    st.write('File Path Entered `%s`' % text_input)
+# text_input = st.sidebar.text_input("Please, Enter your File Path 👇")
+# st.sidebar.caption('For eg. ur/file/path/filename.txt')
+# if text_input == '':
+#     st.title('')
+# elif text_input:
+#     st.write('File Path Entered `%s`' % text_input)
 
+#-----------------------------------github code------------------------------------------------------------
+# import streamlit as st
+# from filepicker import st_file_selector
+# os_path = st_file_selector(st, key = 'tif', label = 'Choose tif file')
+#-----------------------------------------------------------------------------------------------
 
 
 # filename = file_selector()
 
-if text_input !='':
+if uploaded_file is not None:
     placeholder.empty()
     # to read file as bytes:
-    # bytes_data = uploaded_file.getvalue()  # get data from file in the form of bytes 
-    # data = bytes_data.decode('utf-8')  # decoding the data 
+    bytes_data = uploaded_file.getvalue()  # get data from file in the form of bytes 
+    data = bytes_data.decode('utf-8')  # decoding the data 
     # filename = uploaded_file.name
     # filename= uploaded_file.name
     # path =os.path.basename(filename)
 
-    df =  preprocessing.PreProcess(text_input) 
+    df =  preprocessing.PreProcess(data) 
 
     #printing the data from the file on web app
     st.text('Your Whatsapp Data Looks Like:')
@@ -50,8 +58,6 @@ if text_input !='':
         no_of_mgs , no_of_words , no_of_media_msg , no_of_links , no_of_emojis , words_per_msg =  funcs.fetch_stats(selected_author, df)
 
         col1, col2, col3  = st.columns([0.2, 0.2, 0.2])
-
-        
     
         with col1:
             st.header ('Total Messages:')
