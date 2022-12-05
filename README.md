@@ -16,7 +16,7 @@
 
 <hr>
 
-- After selecting the .txt file, just click on Show Analysis button and you will get the analysis replort that will consist of:
+- After selecting the .txt file, just click on Show Analysis button and you will get the analysis report that will consist of:
 1. Total Messages , Total Words , Total Media Shared , Links Shared , avg Words per text , Total Emojis Shared
 2. Most Active Users
 3. WordCloud graph
