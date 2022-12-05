@@ -6,17 +6,24 @@ import emoji
 from collections import Counter
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
-
+import os
 
     # take data from the .txt file and split them into Date, Time, Author , Message
 
-def PreProcess(file_path):
-    print
+def PreProcess(conversation):
+   
     data = []
-    with open(file_path, encoding="utf-8") as fp:
+    #open text file
+    temp_file = open("data.txt", "x")
+    #write string to file
+    n = temp_file.write(conversation)
+    print(n)
+    #close file
+    temp_file.close()
+
+    with open("data.txt",'r', encoding="utf-8") as fp:
         fp.readline()
 
-    
         messageBuffer = []
         date, time, author = None, None, None
         while True:
@@ -82,7 +89,9 @@ def PreProcess(file_path):
     df['hr_period'] = period
     
     print('Preprocessing Completed Successfully')
-
+   
+    if os.path.exists("data.txt"):
+         os.remove("data.txt")
     return df
 
 def date_time(s):
@@ -125,6 +134,5 @@ def emoji_split_count(text):
             emoji_list.append(word)
     return emoji_list
     
-
 
 
