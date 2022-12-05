@@ -84,115 +84,99 @@ if uploaded_file is not None:
         
     # finding the most active authors in the group/chat  (group bevel analysis)
     
-    if selected_author == 'Overall':
-        st.title('Most Active Users:')
-        x , result_df = funcs.fetch_most_active_users(df)
-        fig, ax = plt.subplots()
-        col1 , col2 = st.columns(2)
+        if selected_author == 'Overall':
+            st.title('Most Active Users:')
+            x , result_df = funcs.fetch_most_active_users(df)
+            fig, ax = plt.subplots()
+            col1 , col2 = st.columns(2)
+
+            with col1:
+                ax.bar(x.index , x.values,color= 'green')
+                plt.xticks(rotation='vertical')
+                st.pyplot(fig)
+            with col2:
+                st.dataframe(result_df)
+        
+        # creating the wordcloud
+        st.title('WordCloud graph for: '+str(selected_author))
+        try:
+            df_wc  = funcs.create_wordcoud(selected_author,df)
+            fig, ax = plt.subplots()
+            plt.imshow(df_wc)
+            st.pyplot(fig) 
+        except Exception as e:
+            st.title('Error: '+str(e))
+
+        # Most common words dataframe
+        st.title('The Most Common words for: '+str(selected_author))
+        _20_most_common_wrds , _100_most_common_wrds = funcs.most_common_words(selected_author,df)
+
+        col1, col2 = st.columns([0.4, 0.6])
 
         with col1:
-            ax.bar(x.index , x.values,color= 'green')
+            st.dataframe(_100_most_common_wrds)
+
+        with col2:
+            fig,ax = plt.subplots()
+            ax.barh(_20_most_common_wrds['Word'], _20_most_common_wrds["Times Repeated"],color='#cae00d')
+            plt.xticks(rotation='vertical')
+            st.pyplot(fig)
+        
+        # emoji analysis 
+        st.title('Emoji Analysis: '+str(selected_author))
+        
+        try:
+
+            emoji_df = funcs.emoji_analysis(selected_author,df)
+            col1, col2 = st.columns([0.4, 0.6])
+            with col1:
+                st.dataframe(emoji_df)
+            with col2:
+                fig = px.pie(emoji_df, values='Times Repeated', names='Emoji')
+                fig.update_traces(textposition='inside', textinfo='percent+label')
+                st.write(fig)
+        except Exception as e:
+            st.caption(e)
+            st.header("Can't make pie chart : There are no Emojis for this Field.")
+
+        # monthly timeline
+        st.subheader('Monthly Activity (Messages per Month)')
+        timeline = funcs.monthly_timeline(selected_author,df)
+        fig,ax = plt.subplots()
+        ax.plot(timeline['time'],timeline['Message'])
+        plt.xticks(rotation='vertical')
+        st.pyplot(fig) 
+
+        #daily timeline
+        st.subheader('Daily Activity (Messages per Day)')
+        daily_timeline =funcs.daily_timeline(selected_author,df)
+        fig,ax = plt.subplots()
+        ax.plot(daily_timeline['Date'],daily_timeline['Message'], color='#cae00d')
+        plt.xticks(rotation='vertical')
+        st.pyplot(fig)
+
+        #weekly activity 
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.header('Most Active Days')
+            weekly_acti = funcs.week_activity_map(selected_author,df)
+            fig,ax = plt.subplots()
+            ax.bar(weekly_acti.index,weekly_acti.values, color='hotpink')
             plt.xticks(rotation='vertical')
             st.pyplot(fig)
         with col2:
-            st.dataframe(result_df)
-    
-    # creating the wordcloud
-    st.title('WordCloud graph for: '+str(selected_author))
-    try:
-        df_wc  = funcs.create_wordcoud(selected_author,df)
-        fig, ax = plt.subplots()
-        plt.imshow(df_wc)
-        st.pyplot(fig) 
-    except Exception as e:
-        st.title('Error: '+str(e))
-
-    # Most common words dataframe
-    st.title('The Most Common words for: '+str(selected_author))
-    _20_most_common_wrds , _100_most_common_wrds = funcs.most_common_words(selected_author,df)
-
-    col1, col2 = st.columns([0.4, 0.6])
-
-    with col1:
-        st.dataframe(_100_most_common_wrds)
-
-    with col2:
-        fig,ax = plt.subplots()
-        ax.barh(_20_most_common_wrds['Word'], _20_most_common_wrds["Times Repeated"],color='#cae00d')
-        plt.xticks(rotation='vertical')
-        st.pyplot(fig)
-    
-    # emoji analysis 
-    st.title('Emoji Analysis: '+str(selected_author))
-    
-    try:
-
-        emoji_df = funcs.emoji_analysis(selected_author,df)
-        col1, col2 = st.columns([0.4, 0.6])
-        with col1:
-            st.dataframe(emoji_df)
-        with col2:
-            fig = px.pie(emoji_df, values='Times Repeated', names='Emoji')
-            fig.update_traces(textposition='inside', textinfo='percent+label')
-            st.write(fig)
-    except Exception as e:
-        st.caption(e)
-        st.header("Can't make pie chart : There are no Emojis for this Field.")
-
-    # monthly timeline
-    st.subheader('Monthly Activity (Messages per Month)')
-    timeline = funcs.monthly_timeline(selected_author,df)
-    fig,ax = plt.subplots()
-    ax.plot(timeline['time'],timeline['Message'])
-    plt.xticks(rotation='vertical')
-    st.pyplot(fig) 
-
-    #daily timeline
-    st.subheader('Daily Activity (Messages per Day)')
-    daily_timeline =funcs.daily_timeline(selected_author,df)
-    fig,ax = plt.subplots()
-    ax.plot(daily_timeline['Date'],daily_timeline['Message'], color='#cae00d')
-    plt.xticks(rotation='vertical')
-    st.pyplot(fig)
-
-    #weekly activity 
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.header('Most Active Days')
-        weekly_acti = funcs.week_activity_map(selected_author,df)
-        fig,ax = plt.subplots()
-        ax.bar(weekly_acti.index,weekly_acti.values, color='hotpink')
-        plt.xticks(rotation='vertical')
-        st.pyplot(fig)
-    with col2:
-        st.header('Most Active Months')
-        monthly_acti = funcs.month_activity_map(selected_author,df)
-        fig,ax = plt.subplots()
-        ax.bar(monthly_acti.index,monthly_acti.values, color='#D1D100')
-        plt.xticks(rotation='vertical')
-        st.pyplot(fig)
-    
-    # heatmap for hourly activity
-    st.header('Hourly Activity')
-    heatmap = funcs.hourly_activity_heatmap(selected_author,df)
-    fig,ax = plt.subplots()
-    ax = sns.heatmap(heatmap ,cmap="Greens")
-    st.pyplot(fig)
+            st.header('Most Active Months')
+            monthly_acti = funcs.month_activity_map(selected_author,df)
+            fig,ax = plt.subplots()
+            ax.bar(monthly_acti.index,monthly_acti.values, color='#D1D100')
+            plt.xticks(rotation='vertical')
+            st.pyplot(fig)
         
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-   
-
+        # heatmap for hourly activity
+        st.header('Hourly Activity')
+        heatmap = funcs.hourly_activity_heatmap(selected_author,df)
+        fig,ax = plt.subplots()
+        ax = sns.heatmap(heatmap ,cmap="Greens")
+        st.pyplot(fig)
+            
